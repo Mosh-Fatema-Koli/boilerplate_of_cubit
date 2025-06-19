@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
                     theme: ThemeData.light(),
                     darkTheme: ThemeData.dark(),
                     home: SplashPage(),
-                    title: 'OnDesk',
+                    title: 'Tasks',
                     debugShowCheckedModeBanner: false,
                   );
                 },
@@ -73,4 +73,4 @@ class MyApp extends StatelessWidget {
 }
 
 
-//Native Splash :: https://medium.com/flutter-community/flutter-2019-real-splash-screens-tutorial-16078660c7a1
+//stable
