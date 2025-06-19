@@ -1,5 +1,7 @@
+import 'package:boilerplate_of_cubit/library.dart';
 
-import '../model/UserInfo.dart';
+import '../data/model/UserInfo.dart';
+
 
 
 class AppCache {
