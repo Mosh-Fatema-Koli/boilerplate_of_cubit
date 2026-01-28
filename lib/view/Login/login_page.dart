@@ -43,7 +43,7 @@ class LoginPage extends StatelessWidget {
             },
             builder: (context, state) {
               var cubit = LoginCubit.get(context);
-               cubit.emailController.text="bilkis.ypsa.eie@gmail.com";
+               cubit.emailController.text="mamunur.rashed@savethechildren.org";
               cubit.passwordController.text="Default123";
               return MultiBlocProvider(
                   providers: [

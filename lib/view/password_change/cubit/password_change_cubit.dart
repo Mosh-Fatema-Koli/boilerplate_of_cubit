@@ -1,12 +1,14 @@
 import 'package:boilerplate_of_cubit/library.dart';
 import 'package:flutter/cupertino.dart';
+
+import '../../../data/data_sources/api_core/api_with_ssl_pinning.dart';
 part 'password_change_state.dart';
 
 class PasswordChangeCubit extends Cubit<PasswordChangeState> {
   PasswordChangeCubit() : super(PasswordChangeInitial());
 
   final _miscController = MiscController();
-  API api = API();
+  APIServiceWithSSLPining api = APIServiceWithSSLPining();
 
   Future<void> submitData({
     required BuildContext context,

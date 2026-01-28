@@ -1,14 +1,13 @@
 
 import 'package:boilerplate_of_cubit/library.dart';
+import 'package:dio/io.dart';
+import 'package:flutter/services.dart';
 
 
-class API {
-
+class APIServiceWithSSLPining {
   final Dio _dio = Dio();
-  final miscontroller=MiscController();
 
-
-  API() {
+  APIServiceWithSSLPining() {
     _dio.options = BaseOptions(
       baseUrl: Constant.baseUrl,
       connectTimeout: const Duration(seconds: 15),
@@ -18,31 +17,54 @@ class API {
     );
 
     _dio.interceptors.add(PrettyDioLogger());
+
+    _setupSslPinning();
   }
 
-  Dio get sendRequest => _dio;
+  /// Setup SSL pinning
+  Future<void> _setupSslPinning() async {
+    final sslCert = await rootBundle.load('assets/ssl_certificate/sectigo_r46.crt');
+    final securityContext = SecurityContext(withTrustedRoots: false);
+    securityContext.setTrustedCertificatesBytes(sslCert.buffer.asUint8List());
 
-  Future<Response> apiCore({required String address, required String method, String? token, dynamic jsonData,}) async {
+    (_dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
+      final httpClient = HttpClient(context: securityContext);
+      httpClient.badCertificateCallback = (cert, host, port) {
+        return host == "frmapi.scibd.info"; // Accept only this domain
+      };
+      return httpClient;
+    };
+  }
+
+  Dio get client => _dio;
+
+  /// Core API method for all requests
+  Future<Response> apiCore({
+    required String address,
+    required String method,
+    String? token,
+    dynamic jsonData,
+  }) async {
     Map<String, String> headers = {
       'Content-Type': 'application/json',
+      if (token != null && token.isNotEmpty) 'Authorization': 'Token $token',
     };
-
-    if (token != null && token.isNotEmpty) {
-      //headers['Authorization'] = 'Bearer $token';
-      headers['Authorization'] = 'Token $token';
-    }
 
     _dio.options.headers = headers;
     _dio.options.method = method;
-    print(address);
 
     try {
       return await _dio.request(address, data: jsonData);
-    } catch (e) {
+    } on DioException catch (dioError) {
+      // You can handle Dio errors here
+      rethrow;
+    } on SocketException {
+      // No internet
+      rethrow;
+    } catch (ex) {
       rethrow;
     }
   }
-
   /// **Login API**
   login({String? endpoint, required String username, required String password,}) async {
     final String httpAddress = '/login';
@@ -63,7 +85,7 @@ class API {
 
     try {
       var apiResponse = await apiCore(address: httpAddress, method: 'POST', jsonData: jsonRequest,);
-        print(apiResponse.statusCode );
+      print(apiResponse.statusCode );
       if (apiResponse.statusCode == 200) {
         Map response = apiResponse.data;
         if (response.isNotEmpty) {
@@ -106,10 +128,10 @@ class API {
         var response = apiResponse.data;
         bool success = true;
         fetchResponse['Success'] = success;
-          var packetList = response;
-          if (packetList.isNotEmpty) {
-            fetchResponse['Message'] = 'Data fetched successfully';
-            fetchResponse['PacketList'] = packetList;
+        var packetList = response;
+        if (packetList.isNotEmpty) {
+          fetchResponse['Message'] = 'Data fetched successfully';
+          fetchResponse['PacketList'] = packetList;
         }
         return json.encode(fetchResponse);
       }  else {
@@ -229,11 +251,11 @@ class API {
       return handleGenericError(ex, fetchResponse);
     }
 
-return json.encode(fetchResponse);
-}
+    return json.encode(fetchResponse);
+  }
 
 
-/// **Delete Data (DELETE Request)**
+  /// **Delete Data (DELETE Request)**
   deleteData({required String endpoint, String? token,}) async {
 
     var fetchResponse = {
@@ -360,5 +382,4 @@ return json.encode(fetchResponse);
 
 //endregion
 }
-
 
