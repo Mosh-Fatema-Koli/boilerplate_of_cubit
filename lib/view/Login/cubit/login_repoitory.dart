@@ -3,10 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:boilerplate_of_cubit/library.dart';
 
 import '../../../data/data_sources/api_core/api.dart';
+import '../../../data/data_sources/api_core/api_with_ssl_pinning.dart';
 
 class LoginRepository {
 
-  API api = API();
+  APIServiceWithSSLPining api = APIServiceWithSSLPining();
   final _miscController = MiscController();
 
   //region LOGIN API

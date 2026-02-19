@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import '../../../core/MiscController.dart';
 import '../../data_sources/api_core/api.dart';
+import '../../data_sources/api_core/api_with_ssl_pinning.dart';
 import '../../data_sources/localDB/Repo_controller.dart';
 import 'Leave/history/model/leave_model.dart';
 
@@ -11,7 +12,7 @@ import 'package:boilerplate_of_cubit/library.dart';
 
 class OffLineOrOnlineLeaveRepository {
 
-  API api = API();
+  APIServiceWithSSLPining api = APIServiceWithSSLPining();
   final _repository = LocalDBRepository();
   final _miscController = MiscController();
 
@@ -215,7 +216,7 @@ class OffLineOrOnlineLeaveRepository {
           "image": imagePath.isNotEmpty ? multipartFile : "",
         });
 
-        var response = await API().postData(
+        var response = await APIServiceWithSSLPining().postData(
           endpoint: "/leaveapplication/",
           token: AppCache().userInfo?.token.toString(),
           data: formData,

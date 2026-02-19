@@ -1,11 +1,13 @@
 import 'package:boilerplate_of_cubit/library.dart';
 import 'package:flutter/cupertino.dart';
+
+import '../../../data/data_sources/api_core/api_with_ssl_pinning.dart';
 part 'update_profile_state.dart';
 
 class UpdateProfileCubit extends Cubit<UpdateProfileState> {
   UpdateProfileCubit() : super(UpdateProfileInitial());
 
-  API api = API();
+  APIServiceWithSSLPining api = APIServiceWithSSLPining();
   final _miscController = MiscController();
 
   Future<File?> selectImage() async {
